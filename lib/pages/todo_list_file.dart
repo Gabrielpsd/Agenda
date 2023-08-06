@@ -1,3 +1,4 @@
+import 'package:calculator/models/todo.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/todolistitems.dart';
@@ -10,7 +11,7 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  List<String> todoTasks = [];
+  List<Todo> todoTasks = [];
 
   final TextEditingController fieldTasks = TextEditingController();
 
@@ -57,8 +58,8 @@ class _TodoListPageState extends State<TodoListPage> {
                     child: ListView(
                       shrinkWrap: true,
                       children: [
-                        for (String todo in todoTasks)
-                          TodoListItems(title: todo),
+                        for (Todo todo in todoTasks)
+                          TodoListItems(todoItem: todo),
                       ],
                     ),
                   ),
@@ -89,7 +90,9 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   void insertTask() {
-    todoTasks.add(fieldTasks.text);
+    Todo newTodo = Todo(title: fieldTasks.text, dateTime: DateTime.now());
+
+    todoTasks.add(newTodo);
     setState(() {});
   }
 }
