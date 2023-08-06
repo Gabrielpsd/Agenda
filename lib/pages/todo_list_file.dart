@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 
-class TodoListPage extends StatelessWidget {
-  const TodoListPage({super.key});
+class TodoListPage extends StatefulWidget {
+  TodoListPage({super.key});
+
+  @override
+  State<TodoListPage> createState() => _TodoListPageState();
+}
+
+class _TodoListPageState extends State<TodoListPage> {
+  List<String> todoTasks = [];
+
+  final TextEditingController fieldTasks = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +27,7 @@ class TodoListPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextField(
+                        controller: fieldTasks,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Adicione uma Tarefa',
@@ -27,7 +37,7 @@ class TodoListPage extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: insertTask,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xffEDBC39),
                         padding: const EdgeInsets.all(14),
@@ -43,22 +53,15 @@ class TodoListPage extends StatelessWidget {
                 ListView(
                   shrinkWrap: true,
                   children: [
-                    Container(
-                      color: Colors.red,
-                      height: 50,
-                    ),
-                    Container(
-                      color: Colors.blue,
-                      height: 50,
-                    ),
-                    Container(
-                      color: Colors.green,
-                      height: 50,
-                    ),
-                    Container(
-                      color: Colors.blue,
-                      height: 50,
-                    ),
+                    for (String todo in todoTasks)
+                      ListTile(
+                        title: Text(todo),
+                        subtitle: Text("21/01/2023"),
+                        leading: Icon(Icons.save),
+                        onTap: () {
+                          print("Tarefa $todo");
+                        },
+                      ),
                   ],
                 ),
                 SizedBox(height: 16),
@@ -83,5 +86,10 @@ class TodoListPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void insertTask() {
+    todoTasks.add(fieldTasks.text);
+    setState(() {});
   }
 }
