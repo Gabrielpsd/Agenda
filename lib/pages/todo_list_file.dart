@@ -12,6 +12,8 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   List<Todo> todoTasks = [];
+  Todo? deletedItem;
+  int? position;
 
   final TextEditingController fieldTasks = TextEditingController();
 
@@ -41,7 +43,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       ),
                       SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: insertTask,
+                        onPressed: () => insertTask(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xffEDBC39),
                           padding: const EdgeInsets.all(14),
@@ -59,7 +61,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       shrinkWrap: true,
                       children: [
                         for (Todo todo in todoTasks)
-                          TodoListItems(todoItem: todo),
+                          TodoListItems(todoItem: todo, onDelete: onDelete),
                       ],
                     ),
                   ),
@@ -71,7 +73,7 @@ class _TodoListPageState extends State<TodoListPage> {
                             "VOce possu ${todoTasks.length} tarefas pendentes"),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {}, //deleteAllTodoDialog(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xffEDBC39),
                           padding: const EdgeInsets.all(14),
@@ -90,9 +92,53 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   void insertTask() {
-    Todo newTodo = Todo(title: fieldTasks.text, dateTime: DateTime.now());
-
-    todoTasks.add(newTodo);
-    setState(() {});
+    setState(() {
+      Todo newTodo = Todo(title: fieldTasks.text, dateTime: DateTime.now());
+      todoTasks.add(newTodo);
+    });
   }
+
+  void onDelete(Todo todo) {
+    deletedItem = todo;
+    position = todoTasks.indexOf(todo);
+
+    setState(() {
+      todoTasks.remove(todo);
+    });
+
+    //it is important to clear other snacks that is in the screen
+    //ScaffoldMessenger.of(context).clearSnackBars();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 3),
+        content: Text("Tarefa ${todo.title} removido !"),
+        backgroundColor: Colors.orangeAccent,
+        action: SnackBarAction(
+          label: 'Desfazer',
+          textColor: Colors.white,
+          onPressed: () {
+            setState(() {
+              todoTasks.insert(position!, todo!);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  /*deleteAllTodoDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Deletar tudo"),
+        content: Text("Voce deseja deletar tudo ? "),
+        actions: [
+          TextButton(onPressed: () {}, child: Text("cancelar")),
+          TextButton(onPressed: () {}, child: Text("Limpar Tudo")),
+        ],
+      ),
+    );
+  }
+*/
 }
