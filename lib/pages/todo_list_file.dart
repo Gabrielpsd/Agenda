@@ -35,9 +35,14 @@ class _TodoListPageState extends State<TodoListPage> {
                         child: TextField(
                           controller: fieldTasks,
                           decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.orangeAccent),
+                            ),
                             border: OutlineInputBorder(),
                             labelText: 'Adicione uma Tarefa',
                             hintText: 'Ex. Estudar Flutter',
+                            labelStyle: TextStyle(color: Colors.orangeAccent),
                           ),
                         ),
                       ),
@@ -73,7 +78,8 @@ class _TodoListPageState extends State<TodoListPage> {
                             "VOce possu ${todoTasks.length} tarefas pendentes"),
                       ),
                       ElevatedButton(
-                        onPressed: () {}, //deleteAllTodoDialog(),
+                        onPressed: () =>
+                            deleteAllTodoDialog(), //deleteAllTodoDialog(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xffEDBC39),
                           padding: const EdgeInsets.all(14),
@@ -107,12 +113,12 @@ class _TodoListPageState extends State<TodoListPage> {
     });
 
     //it is important to clear other snacks that is in the screen
-    //ScaffoldMessenger.of(context).clearSnackBars();
 
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: Duration(seconds: 3),
-        content: Text("Tarefa ${todo.title} removido !"),
+        content: Text("Tarefa ${todo.title} removida "),
         backgroundColor: Colors.orangeAccent,
         action: SnackBarAction(
           label: 'Desfazer',
@@ -127,18 +133,32 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  /*deleteAllTodoDialog() {
+  deleteAllTodoDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Deletar tudo"),
         content: Text("Voce deseja deletar tudo ? "),
         actions: [
-          TextButton(onPressed: () {}, child: Text("cancelar")),
-          TextButton(onPressed: () {}, child: Text("Limpar Tudo")),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("cancelar")),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                deleteAlltodos();
+              },
+              child: Text("Limpar Tudo")),
         ],
       ),
     );
   }
-*/
+
+  void deleteAlltodos() {
+    setState(() {
+      todoTasks.clear();
+    });
+  }
 }
