@@ -1,4 +1,5 @@
 import 'package:calculator/models/todo.dart';
+import 'package:calculator/repositories/repositories.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/todolistitems.dart';
@@ -14,8 +15,21 @@ class _TodoListPageState extends State<TodoListPage> {
   List<Todo> todoTasks = [];
   Todo? deletedItem;
   int? position;
+  String? errorText;
 
   final TextEditingController fieldTasks = TextEditingController();
+  final TodoRepository todoRepository = TodoRepository();
+
+  @override
+  void initState() {
+    super.initState();
+
+    todoRepository.getTodoList().then((value) {
+      setState(() {
+        todoTasks = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +57,7 @@ class _TodoListPageState extends State<TodoListPage> {
                             labelText: 'Adicione uma Tarefa',
                             hintText: 'Ex. Estudar Flutter',
                             labelStyle: TextStyle(color: Colors.orangeAccent),
+                            errorText: errorText,
                           ),
                         ),
                       ),
@@ -98,10 +113,20 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   void insertTask() {
+    if (fieldTasks.text.isEmpty) {
+      setState(() {
+        errorText = 'Elemento nao pode ser vazio';
+      });
+      return;
+    }
+
     setState(() {
       Todo newTodo = Todo(title: fieldTasks.text, dateTime: DateTime.now());
       todoTasks.add(newTodo);
+      errorText = null;
     });
+
+    todoRepository.saveTodoList(todoTasks);
   }
 
   void onDelete(Todo todo) {
@@ -111,7 +136,7 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       todoTasks.remove(todo);
     });
-
+    todoRepository.saveTodoList(todoTasks);
     //it is important to clear other snacks that is in the screen
 
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -127,6 +152,7 @@ class _TodoListPageState extends State<TodoListPage> {
             setState(() {
               todoTasks.insert(position!, todo!);
             });
+            todoRepository.saveTodoList(todoTasks);
           },
         ),
       ),
@@ -160,5 +186,6 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       todoTasks.clear();
     });
+    todoRepository.saveTodoList(todoTasks);
   }
 }
