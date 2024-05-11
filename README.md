@@ -1,6 +1,6 @@
 # calculator
 
-A new Flutter project.
+Um projetinho para ver sobre o Framework mais conhecido de Dart. 
 
 ## Getting Started
 
